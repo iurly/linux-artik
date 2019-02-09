@@ -698,14 +698,14 @@ const unsigned char s5pxx18_pio_fn_no[][GPIO_NUM_PER_BANK] = {
 /*----------------------------------------------------------------------------*/
 #define ALIVE_INDEX 5			 /* number of gpio module */
 static spinlock_t lock[ALIVE_INDEX + 1]; /* A, B, C, D, E, alive */
-static unsigned long lock_flags[ALIVE_INDEX + 1];
 
 #define IO_LOCK_INIT(x) spin_lock_init(&lock[x])
-#define IO_LOCK(x) spin_lock_irqsave(&lock[x], lock_flags[x])
-#define IO_UNLOCK(x) spin_unlock_irqrestore(&lock[x], lock_flags[x])
+#define IO_LOCK(x) spin_lock_irqsave(&lock[x], flags)
+#define IO_UNLOCK(x) spin_unlock_irqrestore(&lock[x], flags)
 
 void nx_soc_gpio_set_io_func(unsigned int io, unsigned int func)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 
@@ -740,6 +740,7 @@ int nx_soc_gpio_get_altnum(unsigned int io)
 
 unsigned int nx_soc_gpio_get_io_func(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 	unsigned int fn = -1;
@@ -769,6 +770,7 @@ unsigned int nx_soc_gpio_get_io_func(unsigned int io)
 
 void nx_soc_gpio_set_io_dir(unsigned int io, int out)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 
@@ -798,6 +800,7 @@ void nx_soc_gpio_set_io_dir(unsigned int io, int out)
 
 int nx_soc_gpio_get_io_dir(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 	int dir = -1;
@@ -829,6 +832,7 @@ int nx_soc_gpio_get_io_dir(unsigned int io)
 
 void nx_soc_gpio_set_io_pull(unsigned int io, int val)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 
@@ -861,6 +865,7 @@ void nx_soc_gpio_set_io_pull(unsigned int io, int val)
 
 int nx_soc_gpio_get_io_pull(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 	int up = -1;
@@ -921,6 +926,7 @@ int nx_soc_gpio_get_io_drv(int gpio)
 
 void nx_soc_gpio_set_out_value(unsigned int io, int high)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 
@@ -950,6 +956,7 @@ void nx_soc_gpio_set_out_value(unsigned int io, int high)
 
 int nx_soc_gpio_get_out_value(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 	int val = -1;
@@ -981,6 +988,7 @@ int nx_soc_gpio_get_out_value(unsigned int io)
 
 int nx_soc_gpio_get_in_value(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 	int val = -1;
@@ -1012,6 +1020,7 @@ int nx_soc_gpio_get_in_value(unsigned int io)
 
 void nx_soc_gpio_set_int_enable(unsigned int io, int on)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 
@@ -1042,6 +1051,7 @@ void nx_soc_gpio_set_int_enable(unsigned int io, int on)
 
 int nx_soc_gpio_get_int_enable(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 	int enb = -1;
@@ -1073,6 +1083,7 @@ int nx_soc_gpio_get_int_enable(unsigned int io)
 
 void nx_soc_gpio_set_int_mode(unsigned int io, unsigned int mode)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 	int det = 0;
@@ -1108,6 +1119,7 @@ void nx_soc_gpio_set_int_mode(unsigned int io, unsigned int mode)
 
 int nx_soc_gpio_get_int_mode(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 	int mod = -1;
@@ -1145,6 +1157,7 @@ int nx_soc_gpio_get_int_mode(unsigned int io)
 
 int nx_soc_gpio_get_int_pend(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 	int pend = -1;
@@ -1176,6 +1189,7 @@ int nx_soc_gpio_get_int_pend(unsigned int io)
 
 void nx_soc_gpio_clr_int_pend(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int grp = PAD_GET_GROUP(io);
 	unsigned int bit = PAD_GET_BITNO(io);
 
@@ -1207,6 +1221,7 @@ void nx_soc_gpio_clr_int_pend(unsigned int io)
 
 void nx_soc_alive_set_det_enable(unsigned int io, int on)
 {
+	unsigned long flags;
 	unsigned int bit = PAD_GET_BITNO(io);
 
 	pr_debug("%s (%d)\n", __func__, bit);
@@ -1221,6 +1236,7 @@ void nx_soc_alive_set_det_enable(unsigned int io, int on)
 
 int nx_soc_alive_get_det_enable(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int bit = PAD_GET_BITNO(io);
 	int mod = 0;
 
@@ -1235,6 +1251,7 @@ int nx_soc_alive_get_det_enable(unsigned int io)
 
 void nx_soc_alive_set_det_mode(unsigned int io, unsigned int mode, int on)
 {
+	unsigned long flags;
 	unsigned int bit = PAD_GET_BITNO(io);
 
 	pr_debug("%s (%d)\n", __func__, bit);
@@ -1246,6 +1263,7 @@ void nx_soc_alive_set_det_mode(unsigned int io, unsigned int mode, int on)
 
 int nx_soc_alive_get_det_mode(unsigned int io, unsigned int mode)
 {
+	unsigned long flags;
 	unsigned int bit = PAD_GET_BITNO(io);
 	int mod = 0;
 
@@ -1260,6 +1278,7 @@ int nx_soc_alive_get_det_mode(unsigned int io, unsigned int mode)
 
 int nx_soc_alive_get_int_pend(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int bit = PAD_GET_BITNO(io);
 	int pend = -1;
 
@@ -1274,6 +1293,7 @@ int nx_soc_alive_get_int_pend(unsigned int io)
 
 void nx_soc_alive_clr_int_pend(unsigned int io)
 {
+	unsigned long flags;
 	unsigned int bit = PAD_GET_BITNO(io);
 
 	pr_debug("%s (%d)\n", __func__, bit);
